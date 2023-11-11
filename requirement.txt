@@ -1,0 +1,9 @@
+pythainlp
+pypdf
+re
+kenlm
+fitz
+PIL
+
+transformers
+datasets
