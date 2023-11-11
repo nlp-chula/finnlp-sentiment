@@ -1,9 +1,7 @@
 pythainlp
 pypdf
-re
 kenlm
+pytesseract
 fitz
-PIL
-
 transformers
 datasets
