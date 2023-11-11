@@ -12,7 +12,7 @@ anlyzer = report.Analyzer("content/path_to_pdf.pdf")
 sentiment = analyzer.predict_sentiment(0:100)
 aspect = analyzer.predict_aspect(0:100)
 ```
-กรณีให้ไฟล์รายงานรูปแบบ pdf เป็นข้อมูลนำเข้า
+กรณีให้ข้อความเป็นข้อมูลนำเข้า
 
 ```
 anlyzer = report.Analyzer()
