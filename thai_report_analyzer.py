@@ -354,7 +354,7 @@ class reportAnalyzer:
         df = df[(df['isTable'] == 0) & (df['isIncomplete'] == 0)].reset_index()[['firm', 'year', 'section', 'paragraph']]
         return df
 
-    def predict_sentiment(self, start:int, end:int, text:str=None):
+    def predict_sentiment(self, start:int=None, end:int=None, text:str=None):
         """
         Predicts the sentiment of a given text or a range of texts from the `extract_df` DataFrame.
         
@@ -390,7 +390,7 @@ class reportAnalyzer:
         return {k: v for k, v in sorted(sentiment_ratios.items(), key=lambda item: item[1])}
 
 
-    def predict_aspect(self, start:int, end:int, text:str=None):
+    def predict_aspect(self, start:int=None, end:int=None, text:str=None):
         """
         Predicts the aspect of a given text or a range of texts using a pre-trained model.
 
