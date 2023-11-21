@@ -118,90 +118,90 @@ aspect = analyzer.predict_aspect(text)
 
 **ทัศนคติ (Aspect)**
 
-|:     Aspects   :|:  Metrics      :||
-|:---------------:|:---------:|------|
-|     Accuracy    |           | 0.79 |
-|    Micro avg    | Precision | 0.79 |
-|   ^^            | Recall    | 0.79 |
-|   ^^            | F1        | 0.79 |
-|    Macro avg    | Precision | 0.72 |
-|  ^^             | Recall    | 0.65 |
-|  ^^             | F1        | 0.66 |
-|   Weighted avg  | Precision | 0.79 |
-|  ^^             | Recall    | 0.79 |
-|  ^^             | F1        | 0.78 |
-|      Brand      | Precision |  0.8 |
-|  ^^             | Recall    |  0.8 |
-|  ^^             | F1        | 0.67 |
-|     Dividend    | Precision | 0.81 |
-|  ^^             | Recall    |   1  |
-|  ^^             | F1        |  0.9 |
-|    Economics    | Precision | 0.79 |
-|  ^^             | Recall    | 0.88 |
-|  ^^             | F1        | 0.79 |
-|   Environment   | Precision | 0.84 |
-|  ^^             | Recall    | 0.88 |
-|  ^^             | F1        | 0.86 |
-|    Financing    | Precision | 0.49 |
-|  ^^             | Recall    | 0.68 |
-|  ^^             | F1        | 0.57 |
-|    Governance   | Precision | 0.72 |
-|  ^^             | Recall    | 0.88 |
-|  ^^             | F1        | 0.79 |
-|    Investment   | Precision | 0.79 |
-|  ^^             | Recall    | 0.51 |
-|  ^^             | F1        | 0.62 |
-|      Legal      | Precision | 0.62 |
-|  ^^             | Recall    | 0.71 |
-|  ^^             | F1        | 0.67 |
-|       M&A       | Precision |   1  |
-|  ^^             | Recall    | 0.23 |
-|  ^^             | F1        | 0.38 |
-|      Others     | Precision | 0.84 |
-|  ^^             | Recall    | 0.62 |
-|  ^^             | F1        | 0.71 |
-|    Political    | Precision | 0.68 |
-|  ^^             | Recall    | 0.54 |
-|  ^^             | F1        |  0.6 |
-| Product/Service | Precision | 0.67 |
-|  ^^             | Recall    | 0.67 |
-|  ^^             | F1        | 0.84 |
-|   Profit/Loss   | Precision | 0.84 |
-|  ^^             | Recall    | 0.91 |
-|  ^^             | F1        | 0.87 |
-|      Rating     | Precision |   0  |
-|  ^^             | Recall    |   0  |
-|  ^^             | F1        |   0  |
-|  Social&People  | Precision | 0.85 |
-|  ^^             | Recall    | 0.86 |
-|  ^^             | F1        | 0.86 |
-|    Technology   | Precision |  0.8 |
-|  ^^             | Recall    | 0.69 |
-|  ^^             | F1        | 0.74 |
+|     Metrics   | Score     |
+|:---------------:|:---------:|
+|     Accuracy    | 0.79 |
+|    Micro avg - Precision | 0.79 |
+|    Micro avg - Recall    | 0.79 |
+|    Micro avg - F1        | 0.79 |
+|    Macro avg - Precision | 0.72 |
+|    Macro avg - Recall    | 0.65 |
+|    Macro avg - F1        | 0.66 |
+|   Weighted avg - Precision | 0.79 |
+|   Weighted avg - Recall    | 0.79 |
+|   Weighted avg - F1        | 0.78 |
+|   Brand - Precision |  0.8 |
+|   Brand - Recall    |  0.8 |
+|   Brand - F1        | 0.67 |
+|   Dividend - Precision | 0.81 |
+|   Dividend - Recall    |   1  |
+|   Dividend - F1        |  0.9 |
+|   Economics - Precision | 0.79 |
+|   Economics - Recall    | 0.88 |
+|   Economics - F1        | 0.79 |
+|   Environment - Precision | 0.84 |
+|   Environment - Recall    | 0.88 |
+|   Environment - F1        | 0.86 |
+|    Financing - Precision | 0.49 |
+|    Financing - Recall    | 0.68 |
+|    Financing - F1        | 0.57 |
+|    Governance - Precision | 0.72 |
+|    Governance - Recall    | 0.88 |
+|    Governance - F1        | 0.79 |
+|    Investment  - Precision | 0.79 |
+|    Investment - Recall    | 0.51 |
+|    Investment - F1        | 0.62 |
+|      Legal - Precision | 0.62 |
+|      Legal - Recall    | 0.71 |
+|      Legal - F1        | 0.67 |
+|       M&A - Precision |   1  |
+|       M&A - Recall    | 0.23 |
+|       M&A - F1        | 0.38 |
+|      Others - Precision | 0.84 |
+|      Others - Recall    | 0.62 |
+|      Others - F1        | 0.71 |
+|    Political - Precision | 0.68 |
+|    Political - Recall    | 0.54 |
+|    Political - F1        |  0.6 |
+| Product/Service - Precision | 0.67 |
+| Product/Service - Recall    | 0.67 |
+| Product/Service - F1        | 0.84 |
+|   Profit/Loss - Precision | 0.84 |
+|   Profit/Loss - Recall    | 0.91 |
+|   Profit/Loss - F1        | 0.87 |
+|      Rating - Precision |   0  |
+|   Rating - Recall    |   0  |
+|   Rating - F1        |   0  |
+|  Social&People - Precision | 0.85 |
+|  Social&People - Recall    | 0.86 |
+|  Social&People - F1        | 0.86 |
+|    Technology - Precision |  0.8 |
+|  Technology - Recall    | 0.69 |
+|  Technology - F1        | 0.74 |
 
 **ขั้วอารมณ์ (Sentiment)**
 
-|:    Aspects :|:  Metrics      :||
-|:------------:|:---------:|------|
-|:   Accuracy :|           | 0.77 |
+|:    Aspects :|  Metrics      |
+|:------------:|:---------:|
+|   Accuracy | 0.77 |
 |   Micro avg  | Precision | 0.77 |
-|  ^^          | Recall    | 0.77 |
-|  ^^          | F1        | 0.77 |
-|   Macro avg  | Precision | 0.78 |
-|  ^^          | Recall    | 0.75 |
-|  ^^          | F1        | 0.76 |
-| Weighted avg | Precision | 0.77 |
-|  ^^          | Recall    | 0.77 |
-|  ^^          | F1        | 0.77 |
-|   Negative   | Precision | 0.80 |
-|  ^^          | Recall    | 0.69 |
-|  ^^          | F1        | 0.74 |
-|    Neutral   | Precision | 0.76 |
-|  ^^          | Recall    | 0.80 |
-|  ^^          | F1        | 0.78 |
-|   Positive   | Precision | 0.77 |
-|  ^^          | Recall    | 0.78 |
-|  ^^          | F1        | 0.77 |
+|   Micro avg - Recall    | 0.77 |
+|   Micro avg - F1        | 0.77 |
+|   Macro avg - Precision | 0.78 |
+|   Macro avg - Recall    | 0.75 |
+|   Macro avg - F1        | 0.76 |
+| Weighted avg - Precision | 0.77 |
+| Weighted avg - Recall    | 0.77 |
+| Weighted avg - F1        | 0.77 |
+|   Negative - Precision | 0.80 |
+|   Negative - Recall    | 0.69 |
+|   Negative - F1        | 0.74 |
+|    Neutral - Precision | 0.76 |
+|    Neutral - Recall    | 0.80 |
+|    Neutral - F1        | 0.78 |
+|   Positive - Precision | 0.77 |
+|   Positive - Recall    | 0.78 |
+|   Positive - F1        | 0.77 |
 
 ## License
 [Creative Commons Attribution 4.0 International Public License (CC-by)](https://creativecommons.org/licenses/by/4.0/)
