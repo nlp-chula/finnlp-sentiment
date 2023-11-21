@@ -4,6 +4,7 @@ from pythainlp import word_tokenize
 from pythainlp.util import normalize
 from pypdf import PdfReader
 import pythainlp
+import difflib
 
 import kenlm
 # ocr pdf
@@ -204,78 +205,34 @@ class reportAnalyzer:
         Returns:
             dict: A dictionary containing the extracted section as a string value, with the section type as the key.
         """
-        
         result_dict = {}
         for line_idx, line in enumerate(page_list):
             if line == '' or re.match('^\s$',line): # clean blank space
                 page_list.pop(line_idx)
-        index_start = None
-        index_end = None
-        if 'BUSINESS' in self.pdf_file_path.upper(): # หาปัจจัยความเสี่ยง
-            key = 'risk'
-            keyword_start = '3.ปัจจัยความเสี่ยง'
-            alternative = '3.ปัจจัยเสี่ยง|3.ปัจจัยเสี่ยง'
-            keyword_end = '4.ทรัพย์สินที่ใช้ในการประกอบธุรกิจ'
-        elif 'MANAGEMENT' in self.pdf_file_path.upper():
-            key = 'sustainability'
-            keyword_start = '10.ความรับผิดชอบต่อสังคม'
-            alternative = '10.การพัฒนาอย่างยั่งยืน|10.การดำเนินธุรกิจอย่างยั่งยืน'
-            keyword_end = 'การควบคุมภายในและการบริหารจัดการความเสี่ยง'
-        elif 'FINANCIAL' in self.pdf_file_path.upper():
-            key = 'md&a'
-            keyword_start = '14.การวิเคราะห์และคำอธิบาย'
-            alternative = '14.คำอธิบายและบทวิเคราะห์|14.คำอธิบายและการวิเคราะห์'
-            keyword_end = 'การรับรองความถูกต้องของข้อมูล'
-        else:
-            for i in range(1,4):
-                if i == 1:
-                    key = 'risk'
-                    keyword_start = 'ปัจจัยความเสี่ยง'
-                    alternative = 'ปัจจัยเสี่ยง|ปัจจัยเสี่ยง'
-                    keyword_end = 'ทรัพย์สินที่ใช้ในการประกอบธุรกิจ'
-                elif i == 2:
-                    key = 'sustainability'
-                    keyword_start = 'ความรับผิดชอบต่อสังคม'
-                    alternative = 'การพัฒนาอย่างยั่งยืน|การดำเนินธุรกิจอย่างยั่งยืน'
-                    keyword_end = 'การควบคุมภายในและการบริหารจัดการความเสี่ยง'
-                elif i == 3:
-                    key = 'md&a'
-                    keyword_start = 'การวิเคราะห์และคำอธิบายของฝ่ายจัดการ'
-                    alternative = 'คำอธิบายและบทวิเคราะห์ของฝ่ายบริหาร|คำอธิบายและการวิเคราะห์ของฝ่ายจัดการ'
-                    keyword_end = 'การรับรองความถูกต้องของข้อมูล'
-                
-                for line_idx,line in enumerate(page_list):
-                    if line == '' or re.match('^\s$',line): # clean blank space
-                        page_list.pop(line_idx)
-                for line_idx,line in enumerate(page_list):
-                    clean = re.sub('\s+', ' ', line)
-                    page_list[line_idx] = clean
-                    pattern = keyword_start + '|' + alternative
-                    if re.search(pattern, clean) and index_start is None: #the first one
-                        index_start = line_idx
-                    elif keyword_end in clean:
-                        index_end = line_idx
-                if index_end is None:
-                    index_end = len(page_list)-1
-                result_dict[key] = '\n'.join(page_list[index_start:index_end])
-            return result_dict
-        
-        for line_idx,line in enumerate(page_list):
-            if line == '' or re.match('^\s$',line): # clean blank space
-                page_list.pop(line_idx)
-        
-        for line_idx, line in enumerate(page_list):
-            clean = re.sub('\s+', ' ', line)
-            page_list[line_idx] = clean
-            pattern = keyword_start + '|' + alternative
-            if re.search(pattern, clean) and index_start is None: #the first one
-                index_start = line_idx
-            elif keyword_end in clean:
-                index_end = line_idx
-
-        if index_end is None:
-            index_end = len(page_list)-1
-        result_dict[key] = '\n'.join(page_list[index_start:index_end])
+        for i in range(1,4):
+            if i == 1:
+                key = 'risk'
+                keyword_start = '2.การบริหารจัดการความเสี่ยง'
+                keyword_end = '3.การขับเคลื่อนธุรกิจเพื่อความยั่งยืน'
+            elif i == 2:
+                key = 'sustainability'
+                keyword_start = '3.การขับเคลื่อนธุรกิจเพื่อความยั่งยืน'
+                keyword_end = '4.การวิเคราะห์และคำอธิบายของฝ่ายจัดการ'
+            elif i == 3:
+                key = 'md&a'
+                keyword_start = 'การวิเคราะห์และคำอธิบายของฝ่ายจัดการ'
+                keyword_end = 'การรับรองความถูกต้องของข้อมูล'
+            check_start = difflib.get_close_matches(keyword_start, page_list)
+            check_stop = difflib.get_close_matches(keyword_end, page_list)
+            if len(check_start) != 0:
+                start_index = page_list.index(check_start[0])
+            else:
+                start_index = 0
+            if len(check_stop) != 0:
+                stop_index = page_list.index(check_stop[0])
+            else:
+                stop_index = start_index + 500
+            result_dict[key] = '\n'.join(page_list[start_index:stop_index])
         return result_dict
     
     def likely_table(self, text, threshold):
