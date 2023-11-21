@@ -119,7 +119,7 @@ aspect = analyzer.predict_aspect(text)
 **ทัศนคติ (Aspect)**
 
 |     Metrics   | Score     |
-|:---------------:|:---------:|
+|:---------------|:---------:|
 |     Accuracy    | 0.79 |
 |    Micro avg - Precision | 0.79 |
 |    Micro avg - Recall    | 0.79 |
@@ -182,7 +182,7 @@ aspect = analyzer.predict_aspect(text)
 **ขั้วอารมณ์ (Sentiment)**
 
 |:    Aspects :|  Metrics      |
-|:------------:|:---------:|
+|:------------|:---------:|
 |   Accuracy | 0.77 |
 |   Micro avg  | Precision | 0.77 |
 |   Micro avg - Recall    | 0.77 |
