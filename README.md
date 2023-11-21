@@ -31,6 +31,7 @@ text = "บริษัทล้มละลายจึงถูกควบร
 sentiment = analyzer.predict_sentiment(text)
 aspect = analyzer.predict_aspect(text)
 ```
+สามารถดูรายละเอียดการใช้ได้ที่ [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1zpu9BSQNcCU-SS74EI_BoO2lDqq2CjG8?usp=sharing)
 
 ## Dataset
 ชุดข้อมูลนี้ได้เก็บรวบรวมมาจากเอกสารแบบฟอร์ม 56-1 จากบริษัทรวม 50 แห่ง ตั้งแต่ปี พ.ศ. 2558 - 2562 และสร้างป้ายกำกับข้อมูล (data annotation) ในระดับกลุ่มของประโยคว่าสะท้อนอารมณ์และทัศนคติ จำนวน 12,258 กลุ่มประโยค ตามประเภทต่อไปนี้ 
