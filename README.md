@@ -118,7 +118,7 @@ aspect = analyzer.predict_aspect(text)
 
 **ทัศนคติ (Aspect)**
 
-|:     Aspects   :|<td colspan="2">Metrics<\td>|
+|:     Aspects   :|<td colspan="2">Metrics<\td>||
 |:---------------:|:---------:|------|
 |     Accuracy    |           | 0.79 |
 |    Micro avg    | Precision | 0.79 |
