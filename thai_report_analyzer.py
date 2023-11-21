@@ -197,13 +197,13 @@ class reportAnalyzer:
     
     def extract_section(self, page_list):
         """
-        Extracts a specific section from a list of text lines based on the PDF file path.
+        Extracts specific sections from a given page list.
 
         Args:
-            page_list (list): A list of text lines.
+            page_list (list): A list of lines representing a page.
 
         Returns:
-            dict: A dictionary containing the extracted section as a string value, with the section type as the key.
+            dict: A dictionary containing extracted sections as values, with section names as keys.
         """
         result_dict = {}
         for line_idx, line in enumerate(page_list):
