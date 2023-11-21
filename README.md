@@ -118,66 +118,6 @@ aspect = analyzer.predict_aspect(text)
 
 **ทัศนคติ (Aspect)**
 
-|:     Aspects   :|<td colspan="2">Metrics<\td>||
-|:---------------:|:---------:|------|
-|     Accuracy    |           | 0.79 |
-|    Micro avg    | Precision | 0.79 |
-|   ^^            | Recall    | 0.79 |
-|   ^^            | F1        | 0.79 |
-|    Macro avg    | Precision | 0.72 |
-|  ^^             | Recall    | 0.65 |
-|  ^^             | F1        | 0.66 |
-|   Weighted avg  | Precision | 0.79 |
-|  ^^             | Recall    | 0.79 |
-|  ^^             | F1        | 0.78 |
-|      Brand      | Precision |  0.8 |
-|  ^^             | Recall    |  0.8 |
-|  ^^             | F1        | 0.67 |
-|     Dividend    | Precision | 0.81 |
-|  ^^             | Recall    |   1  |
-|  ^^             | F1        |  0.9 |
-|    Economics    | Precision | 0.79 |
-|  ^^             | Recall    | 0.88 |
-|  ^^             | F1        | 0.79 |
-|   Environment   | Precision | 0.84 |
-|  ^^             | Recall    | 0.88 |
-|  ^^             | F1        | 0.86 |
-|    Financing    | Precision | 0.49 |
-|  ^^             | Recall    | 0.68 |
-|  ^^             | F1        | 0.57 |
-|    Governance   | Precision | 0.72 |
-|  ^^             | Recall    | 0.88 |
-|  ^^             | F1        | 0.79 |
-|    Investment   | Precision | 0.79 |
-|  ^^             | Recall    | 0.51 |
-|  ^^             | F1        | 0.62 |
-|      Legal      | Precision | 0.62 |
-|  ^^             | Recall    | 0.71 |
-|  ^^             | F1        | 0.67 |
-|       M&A       | Precision |   1  |
-|  ^^             | Recall    | 0.23 |
-|  ^^             | F1        | 0.38 |
-|      Others     | Precision | 0.84 |
-|  ^^             | Recall    | 0.62 |
-|  ^^             | F1        | 0.71 |
-|    Political    | Precision | 0.68 |
-|  ^^             | Recall    | 0.54 |
-|  ^^             | F1        |  0.6 |
-| Product/Service | Precision | 0.67 |
-|  ^^             | Recall    | 0.67 |
-|  ^^             | F1        | 0.84 |
-|   Profit/Loss   | Precision | 0.84 |
-|  ^^             | Recall    | 0.91 |
-|  ^^             | F1        | 0.87 |
-|      Rating     | Precision |   0  |
-|  ^^             | Recall    |   0  |
-|  ^^             | F1        |   0  |
-|  Social&People  | Precision | 0.85 |
-|  ^^             | Recall    | 0.86 |
-|  ^^             | F1        | 0.86 |
-|    Technology   | Precision |  0.8 |
-|  ^^             | Recall    | 0.69 |
-|  ^^             | F1        | 0.74 |
 |     Metrics   | Score     |
 |:---------------:|:---------:|
 |     Accuracy    | 0.79 |
