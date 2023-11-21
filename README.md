@@ -65,7 +65,7 @@ aspect = analyzer.predict_aspect(text)
 
 อ้างอิง Level of Agreement จาก Landis & Koch (1977)
 
-### Training
+## Training
 
 ในการพัฒนาแบบจำลองคณะวิจัยได้แบ่งชุดข้อมูลออกเป็น 3 ชุด ได้แก่ 
 - (70%) Training set จำนวน 8,191 กลุ่มประโยค ระหว่างปี พ.ศ. 2558 -  2561 ของบางบริษัท  
