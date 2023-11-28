@@ -4,4 +4,3 @@ pytesseract==0.3.10
 PyMuPDF==1.23.6
 transformers==4.35.2
 pandas==1.5.3
-re==2.2.1
