@@ -1,33 +1,14 @@
-# clean PDF text
-from pythainlp.corpus import thai_words
-from pythainlp import word_tokenize
-from pythainlp.util import normalize
 from pypdf import PdfReader
-import pythainlp
 import difflib
-
 import kenlm
-# ocr pdf
 import pytesseract
 import fitz
 from PIL import Image
-
 import re, os
 import pandas as pd
+from transformers import AutoTokenizer, pipeline
 
-from transformers import AutoTokenizer, AutoModelForSequenceClassification, pipeline
-from datasets import (
-    load_dataset, load_metric,
-    Dataset,
-    DatasetDict,
-    Features, Sequence, ClassLabel, Value
-)
-
-
-
-
-
-class reportAnalyzer:
+class ReportAnalyzer:
 
     correct_dict = {'':'่',
                 '>':'้',
@@ -54,16 +35,23 @@ class reportAnalyzer:
                 ' ':'',
                 '–':'-'}
     
-    def __init__(self, pdf_file_path:str=None, file_type:str=[None,'pdf','ocr']):
-        if pdf_file_path is not None:
-            self.pdf_file_path = pdf_file_path
-            self.kenlm_model = kenlm.Model('kenlm/sixgram.arpa')
-            if file_type == 'pdf':
-                line_list = self.read_pdf()
-            elif file_type == 'ocr':
-                line_list = self.read_pdf_ocr()
-            section_dict = self.extract_section(line_list)
-            self.extract_df = self.build_dataset(section_dict)
+    def __init__(self):
+        sentiment_model_url = 'nlp-chula/augment-sentiment-finnlp-th'
+        sentiment_tokenizer = AutoTokenizer.from_pretrained(sentiment_model_url, max_length=412)
+        self.tokenizer_kwargs = {'truncation': True, 'max_length': 412}
+        self.sentiment_classifier = pipeline(task='text-classification',
+                                        tokenizer=sentiment_tokenizer,
+                                        model = sentiment_model_url, 
+                                        truncation =True)
+
+        aspect_model_url = 'nlp-chula/aspect-finnlp-th'
+        aspect_tokenizer = AutoTokenizer.from_pretrained(aspect_model_url, max_length=412)
+        self.aspect_classifier = pipeline(task='text-classification',
+                                        tokenizer=aspect_tokenizer,
+                                        model=aspect_model_url,
+                                        truncation=True)
+        
+        self.kenlm_model = kenlm.Model('kenlm/sixgram.arpa')
         self.sentiment_prob = None
         self.aspect_prob = None
 
@@ -78,7 +66,7 @@ class reportAnalyzer:
             float: The spelling score of the given text.
         """
         log_score = 0.0
-        for i, (logprob, length, oov) in enumerate(self.kenlm_model.full_scores(text)):
+        for _, (logprob, _, _) in enumerate(self.kenlm_model.full_scores(text)):
             log_score += logprob
         return log_score
     
@@ -94,48 +82,49 @@ class reportAnalyzer:
         """        
         text_list = []
         index_list = []
-        tone_list = ['','่','้','๊','๋']
+        tone_list = ['','่','้','๊','๋'] # List of Thai tone marks.
         
-        for err, corr in self.correct_dict.items():
-            text = text.replace(err, corr)
+        # Replace errors with correct counterparts using a predefined dictionary.
+        for error, correction in self.correct_dict.items():
+            text = text.replace(error, correction)
         
-        for char in text: # list comprehension
-            text_list.append(char)
+        for text_ind, char in enumerate(text): 
+            text_list.append(char) # Append each character to the list.
+            
+             # Check for specific characters and store their indices.
             if char == 'า' or char == 'ำ':
                 index = len(text_list)-1
                 index_list.append(index)
             elif char in ['ั','ึ','ิ','ี','ื','ำ']:
                 index = len(text_list)-1
                 index_list.append(index)
-                text_list.append('')
+                if (text_ind + 1 < len(text) and text[text_ind + 1] not in tone_list) or (text_ind + 1 == len(text)):
+                  text_list.append('')
+                
             
-            for index in index_list:
-                if text_list[index] == 'า' or text_list[index] == 'ำ':
-                    text_list[index] = 'า'
-                    word_ah = '\r'.join(text_list)
-                    text_list[index] = 'ำ'
-                    word_um = '\r'.join(text_list)
-                    if self.calc_spelling_score(word_ah) > self.calc_spelling_score(word_um):
-                        text_list[index] = 'า'
-                    else:
-                        text_list[index] = 'ำ'
-                else:
-                    if len(text_list) < index+1:
-                        pass
-                    else:
-                        best = -100000
-                        for tone in tone_list:
-                            text_list[index+1] = tone
-                            word = '\r'.join(text_list)
-                            point = self.calc_spelling_score(word)
-                            if point > best:
-                                best = point
-                                best_tone = tone
-                        text_list[index+1] = best_tone
-                text = ''.join(text_list)
-        return text
+        for index in index_list:
+            if text_list[index] == 'า' or text_list[index] == 'ำ':
+                text_list[index] = 'า'
+                word_ah = '\r'.join(text_list)
+                text_list[index] = 'ำ'
+                word_um = '\r'.join(text_list)
 
-    def read_pdf_ocr(self):
+                # Choose the correct form based on spelling scores.
+                if self.calc_spelling_score(word_ah) > self.calc_spelling_score(word_um):
+                    text_list[index] = 'า'
+                else:
+                    text_list[index] = 'ำ'
+            else:
+                if len(text_list) < index+1:
+                    pass
+                else:
+                    best_tone = max(tone_list, key=lambda tone: self.calc_spelling_score('\r'.join(text_list[:index+1] + [tone] + text_list[index+2:])))
+                    text_list[index+1] = best_tone
+                        
+                text = ''.join(text_list) # Rejoin the text after modifications.
+        return text
+    
+    def read_pdf_ocr(self, file_path):
         """
         Reads in a PDF file and performs OCR (Optical Character Recognition) on it to extract text.
         The function first reads in the PDF file and extracts text from each page. Then, it converts each page to a JPG image
@@ -146,7 +135,7 @@ class reportAnalyzer:
         """
         
         # Step 1: Read in the PDF and extract text
-        pdf_file = self.pdf_file_path
+        pdf_file = file_path
         pdf_document = fitz.open(pdf_file)
         output_folder = f"{pdf_file.split('/')[-1].split('.')[0]}"
         os.makedirs(output_folder, exist_ok=True)
@@ -177,7 +166,7 @@ class reportAnalyzer:
 
         return extracted_text
 
-    def read_pdf(self):
+    def read_pdf(self, file_path):
         """
         Reads a PDF file and returns a list of cleaned text from each page.
 
@@ -185,8 +174,8 @@ class reportAnalyzer:
         page_list (list): A list of cleaned text from each page of the PDF file.
         """
         page_list = []
-        reader = PdfReader(self.pdf_file_path)
-        for num_page, page in enumerate(reader.pages):
+        reader = PdfReader(file_path)
+        for _, page in enumerate(reader.pages):
             text = page.extract_text()
             line_list = text.split('\n')
             for line_idx, line in enumerate(line_list):
@@ -292,49 +281,35 @@ class reportAnalyzer:
             pandas.DataFrame: A DataFrame containing the firm name, year, section, and paragraph text for each paragraph
             in the report data that is not identified as a table or incomplete sentence.
         """        
-        firm_list = []
-        year_list = []
         section_list = []
         para_list = []
-        for firm in result_dict.keys():
-            for year in result_dict[firm].keys():
-                for section in result_dict[firm][year].keys():
-                    for para in result_dict[firm][year][section]:
-                        firm_list.append(firm)
-                        year_list.append(year)
-                        section_list.append(section)
-                        para_list.append(para)
-        df = pd.DataFrame({'firm': firm_list, 'year': year_list, 'section': section_list, 'paragraph': para_list})
+        for section in result_dict.keys():
+            for para in result_dict[section].split('\n'):
+                section_list.append(section)
+                para_list.append(para)
+        df = pd.DataFrame({'section': section_list, 'paragraph': para_list})
         df['isTable'] = df['paragraph'].apply(lambda x: self.likely_table(str(x), threshold=20))
         df['isIncomplete'] = df['paragraph'].apply(lambda x: self.incomplete_sentence(str(x)))
 
-        df = df[(df['isTable'] == 0) & (df['isIncomplete'] == 0)].reset_index()[['firm', 'year', 'section', 'paragraph']]
+        df = df[(df['isTable'] == 0) & (df['isIncomplete'] == 0)].reset_index()[['section', 'paragraph']]
         return df
 
-    def predict_sentiment(self, start:int=None, end:int=None, text:str=None):
+    def analyze_text(self, text):
         """
-        Predicts the sentiment of a given text or a range of texts from the `extract_df` DataFrame.
-        
+        Analyzes the sentiment and aspect of a given text.
+
         Args:
-        - start (int): The starting index of the range of texts to predict sentiment for.
-        - end (int): The ending index of the range of texts to predict sentiment for.
-        - text (str, optional): The text to predict sentiment for. If None, the method will use the texts from the `extract_df` DataFrame.
-        
+        - text (str): The text to analyze.
+
         Returns:
-        - A dictionary containing the sentiment ratios of the predicted texts. The keys are the sentiment labels ('Positive', 'Negative', 'Neutral') and the values are the ratios of each sentiment label in the predicted texts.
+        - A dictionary containing the sentiment ratios and aspect ratios of the analyzed text.
+          The keys are 'Sentiment' and 'Aspect', and the values are dictionaries providing
+          the corresponding ratios for each sentiment label and aspect label.
         """
-             
-        model_url = 'nlp-chula/augment-sentiment-finnlp-th'
-        tokenizer = AutoTokenizer.from_pretrained(model_url, max_length = 412)
-        tokenizer_kwargs = {'truncation':True,'max_length':412}
-        sentiment_classifier = pipeline(task='text-classification',
-                                            tokenizer=tokenizer,
-                                            model = model_url, 
-                                            truncation =True)
-        if text is None:
-            self.sentiment_prob = sentiment_classifier(self.extract_df['paragraph'][start:end], **tokenizer_kwargs)
-        else:
-            self.sentiment_prob = sentiment_classifier(text, **tokenizer_kwargs)
+        text_list = text.split('\n')
+
+        # Predict Sentiment
+        self.sentiment_prob = self.sentiment_classifier(text, **self.tokenizer_kwargs)
         sentiment_counts = {'Positive': 0, 'Negative': 0, 'Neutral': 0}
 
         # Counting occurrences of each sentiment type
@@ -343,46 +318,74 @@ class reportAnalyzer:
 
         # Calculating sentiment ratios
         total_samples = len(self.sentiment_prob)
-        sentiment_ratios = {label: count / total_samples for label, count in sentiment_counts.items()}
-        return {k: v for k, v in sorted(sentiment_ratios.items(), key=lambda item: item[1])}
+        sentiment_ratios = {label: count / total_samples for label, count in sorted(sentiment_counts.items(), key=lambda item: item[1], reverse=True)}
+    
+        # Predict Aspect
+        self.aspect_prob = self.aspect_classifier((text_list), **self.tokenizer_kwargs)
 
-
-    def predict_aspect(self, start:int=None, end:int=None, text:str=None):
-        """
-        Predicts the aspect of a given text or a range of texts using a pre-trained model.
-
-        Args:
-        - start (int): The starting index of the text range to analyze.
-        - end (int): The ending index of the text range to analyze.
-        - text (str, optional): The text to analyze. If None, the method will use the text range specified by start and end.
-
-        Returns:
-        - A dictionary containing the aspect ratios of the analyzed text(s). The keys are the aspect labels and the values are the corresponding ratios.
-        """
-        
-        model_url = 'nlp-chula/aspect-finnlp-th'
-        tokenizer = AutoTokenizer.from_pretrained(model_url, max_length = 412)
-        tokenizer_kwargs = {'truncation':True,'max_length':412}
-        aspect_classifier = pipeline(task='text-classification',
-                                            tokenizer=tokenizer,
-                                            model = model_url, 
-                                            truncation =True)
-        if text is None:
-            self.aspect_prob = aspect_classifier(self.extract_df['paragraph'][start:end], **tokenizer_kwargs)
-        else:
-            self.aspect_prob = aspect_classifier(text, **tokenizer_kwargs)
-        
         aspect_list = ['Profit/Loss', 'Financing', 'Product/Service', 'Economics',
        'Political', 'Environment', 'Investment', 'Social&People', 'Brand',
        'Governance', 'Technology', 'Others', 'Legal', 'Dividend', 'M&A', 'Rating']
         aspect_counts = {asp: 0 for asp in aspect_list}
 
-        # Counting occurrences of each sentiment type
+        # Counting occurrences of each aspect type
         for data in self.aspect_prob:
             aspect_counts[data['label']] += 1
 
-        # Calculating sentiment ratios
+        # Calculating aspect ratios
         total_samples = len(self.aspect_prob)
-        aspect_ratios = {label: count / total_samples for label, count in aspect_counts.items()}
-        return {k: v for k, v in sorted(aspect_ratios.items(), key=lambda item: item[1])}
+        aspect_ratios = {label: count / total_samples for label, count in sorted(aspect_counts.items(), key=lambda item: item[1], reverse=True)}
 
+        return {'Sentiment': sentiment_ratios, 'Aspect': aspect_ratios}
+    
+    def analyze_file(self, file_path:str, file_type:str="pdf", start:int=None, end:int=None):
+        """
+        Analyzes the sentiment and aspect of text extracted from a file using pre-trained models.
+
+        Args:
+        - file_path (str): The path to the file for analysis.
+        - file_type (str, optional): The type of the file ('pdf' or 'ocr'). Default is 'pdf'.
+        - start (int, optional): The starting index of the text range to analyze.
+        - end (int, optional): The ending index of the text range to analyze.
+
+        Returns:
+        - A dictionary containing the sentiment ratios and aspect ratios of the analyzed text.
+        The keys are 'Sentiment' and 'Aspect', and the values are dictionaries providing
+        the corresponding ratios for each sentiment label and aspect label.
+        """
+        print("Loading...")
+        if file_type == 'pdf':
+            line_list = self.read_pdf(file_path)
+        elif file_type == 'ocr':
+            line_list = self.read_pdf_ocr(file_path)
+        section_dict = self.extract_section(line_list)
+        self.extract_df = self.build_dataset(section_dict)
+
+        # Predict Sentiment
+        self.sentiment_prob = self.sentiment_classifier(list(self.extract_df['paragraph'][start:end]), **self.tokenizer_kwargs)
+        sentiment_counts = {'Positive': 0, 'Negative': 0, 'Neutral': 0}
+
+        # Counting occurrences of each sentiment type
+        for data in self.sentiment_prob:
+            sentiment_counts[data['label']] += 1
+
+        # Calculating sentiment ratios
+        total_samples = len(self.sentiment_prob)
+        sentiment_ratios = {label: count / total_samples for label, count in sorted(sentiment_counts.items(), key=lambda item: item[1], reverse=True)}
+
+        # Predict Aspect
+        self.aspect_prob = self.aspect_classifier(list(self.extract_df['paragraph'][start:end]), **self.tokenizer_kwargs)
+        aspect_list = ['Profit/Loss', 'Financing', 'Product/Service', 'Economics',
+       'Political', 'Environment', 'Investment', 'Social&People', 'Brand',
+       'Governance', 'Technology', 'Others', 'Legal', 'Dividend', 'M&A', 'Rating']
+        aspect_counts = {asp: 0 for asp in aspect_list}
+
+        # Counting occurrences of each aspect type
+        for data in self.aspect_prob:
+            aspect_counts[data['label']] += 1
+
+        # Calculating aspect ratios
+        total_samples = len(self.aspect_prob)
+        aspect_ratios = {label: count / total_samples for label, count in sorted(aspect_counts.items(), key=lambda item: item[1], reverse=True)}
+
+        return {'Sentiment': sentiment_ratios, 'Aspect': aspect_ratios}
