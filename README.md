@@ -182,26 +182,26 @@ aspect = analyzer.predict_aspect(text)
 
 **ขั้วอารมณ์ (Sentiment)**
 
-|:    Aspects :|  Metrics      |
+|    Aspects  |  Metrics      |
 |:------------|:---------:|
-|   Accuracy | 0.77 |
-|   Micro avg  | Precision | 0.77 |
-|   Micro avg - Recall    | 0.77 |
-|   Micro avg - F1        | 0.77 |
-|   Macro avg - Precision | 0.78 |
-|   Macro avg - Recall    | 0.75 |
-|   Macro avg - F1        | 0.76 |
-| Weighted avg - Precision | 0.77 |
-| Weighted avg - Recall    | 0.77 |
-| Weighted avg - F1        | 0.77 |
-|   Negative - Precision | 0.80 |
-|   Negative - Recall    | 0.69 |
-|   Negative - F1        | 0.74 |
-|    Neutral - Precision | 0.76 |
-|    Neutral - Recall    | 0.80 |
-|    Neutral - F1        | 0.78 |
-|   Positive - Precision | 0.77 |
-|   Positive - Recall    | 0.78 |
+|   Accuracy | 0.78 |
+|   Micro avg  | Precision | 0.78 |
+|   Micro avg - Recall    | 0.78 |
+|   Micro avg - F1        | 0.60 |
+|   Macro avg - Precision | 0.59 |
+|   Macro avg - Recall    | 0.55 |
+|   Macro avg - F1        | 0.56 |
+| Weighted avg - Precision | 0.60 |
+| Weighted avg - Recall    | 0.60 |
+| Weighted avg - F1        | 0.58 |
+|   Negative - Precision | 0.74 |
+|   Negative - Recall    | 0.78 |
+|   Negative - F1        | 0.76 |
+|    Neutral - Precision | 0.81 |
+|    Neutral - Recall    | 0.77 |
+|    Neutral - F1        | 0.79 |
+|   Positive - Precision | 0.76 |
+|   Positive - Recall    | 0.79 |
 |   Positive - F1        | 0.77 |
 
 ## License
