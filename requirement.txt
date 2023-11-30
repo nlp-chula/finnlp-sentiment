@@ -1,6 +1,0 @@
-kenlm==0.2.0
-pypdf==3.17.1
-pytesseract==0.3.10
-PyMuPDF==1.23.6
-transformers==4.35.2
-pandas==1.5.3

@@ -54,6 +54,7 @@ class ReportAnalyzer:
         self.kenlm_model = kenlm.Model('kenlm/sixgram.arpa')
         self.sentiment_prob = None
         self.aspect_prob = None
+        self.extract_df = None
 
     def calc_spelling_score(self, text):
         """
@@ -338,15 +339,13 @@ class ReportAnalyzer:
 
         return {'Sentiment': sentiment_ratios, 'Aspect': aspect_ratios}
     
-    def analyze_file(self, file_path:str, file_type:str="pdf", start:int=None, end:int=None):
+    def analyze_file(self, file_path:str, file_type:str="pdf"):
         """
         Analyzes the sentiment and aspect of text extracted from a file using pre-trained models.
 
         Args:
         - file_path (str): The path to the file for analysis.
         - file_type (str, optional): The type of the file ('pdf' or 'ocr'). Default is 'pdf'.
-        - start (int, optional): The starting index of the text range to analyze.
-        - end (int, optional): The ending index of the text range to analyze.
 
         Returns:
         - A dictionary containing the sentiment ratios and aspect ratios of the analyzed text.
@@ -362,7 +361,7 @@ class ReportAnalyzer:
         self.extract_df = self.build_dataset(section_dict)
 
         # Predict Sentiment
-        self.sentiment_prob = self.sentiment_classifier(list(self.extract_df['paragraph'][start:end]), **self.tokenizer_kwargs)
+        self.sentiment_prob = self.sentiment_classifier(list(self.extract_df['paragraph']), **self.tokenizer_kwargs)
         sentiment_counts = {'Positive': 0, 'Negative': 0, 'Neutral': 0}
 
         # Counting occurrences of each sentiment type
@@ -374,7 +373,7 @@ class ReportAnalyzer:
         sentiment_ratios = {label: count / total_samples for label, count in sorted(sentiment_counts.items(), key=lambda item: item[1], reverse=True)}
 
         # Predict Aspect
-        self.aspect_prob = self.aspect_classifier(list(self.extract_df['paragraph'][start:end]), **self.tokenizer_kwargs)
+        self.aspect_prob = self.aspect_classifier(list(self.extract_df['paragraph']), **self.tokenizer_kwargs)
         aspect_list = ['Profit/Loss', 'Financing', 'Product/Service', 'Economics',
        'Political', 'Environment', 'Investment', 'Social&People', 'Brand',
        'Governance', 'Technology', 'Others', 'Legal', 'Dividend', 'M&A', 'Rating']
