@@ -3,21 +3,6 @@
 
 การพัฒนาเครื่องมือนี้ได้รับการสนับสนุนจาก กองทุนส่งเสริมการพัฒนาตลาดทุน (Capital Market Development Fund: CMDF)
 
-## Installation
-
-```
-!pip install kenlm==0.2.0
-!pip install pypdf==3.17.1
-!pip install pytesseract==0.3.10
-!pip install PyMuPDF==1.23.6
-!pip install transformers==4.35.2
-!pip install pandas==1.5.3
-!sudo apt-get install tesseract-ocr
-!sudo apt-get install tesseract-ocr-tha
-```
-
-## Usage
-
 ตัวอย่างผลสัดส่วนทัศนคติ และอารมณ์ที่มีต่อฟอร์มเอกสาร 56-1 จากโมเดล
 
 ```
@@ -41,6 +26,21 @@
             'M&A': 0.0, 
             'Rating': 0.0}}
 ```
+
+## Installation
+
+```
+!pip install kenlm==0.2.0
+!pip install pypdf==3.17.1
+!pip install pytesseract==0.3.10
+!pip install PyMuPDF==1.23.6
+!pip install transformers==4.35.2
+!pip install pandas==1.5.3
+!sudo apt-get install tesseract-ocr
+!sudo apt-get install tesseract-ocr-tha
+```
+
+## Usage
 
 ```
 from thai_report_analyzer import reportAnalyzer
@@ -66,7 +66,8 @@ ocr_result = analyzer.analyze_file("path_to_ocr_file.pdf", "ocr")
 text = "บริษัทล้มละลายจึงถูกควบรวมกิจการในไตรมาสที่ 2"
 result = analyzer.analyze_text(text)
 ```
-สามารถดูตัวอย่างการใช้ได้ที่ [![Open In Colab](https://colab.research.google.com/drive/1DLR-RAxkpLvQkXTqaa6uSbhPNNHGY3Zl?usp=sharing)
+
+สามารถดูตัวอย่างการใช้ได้ที่ [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)]([https://colab.research.google.com/drive/1I9jESy1WBgtrv9bU_Rnr_rMfJg6be0xH?usp=sharing](https://colab.research.google.com/drive/1DLR-RAxkpLvQkXTqaa6uSbhPNNHGY3Zl?usp=sharing))
 
 ## Dataset
 ชุดข้อมูลนี้ได้เก็บรวบรวมมาจากเอกสารแบบฟอร์ม 56-1 จากบริษัทรวม 50 แห่ง ตั้งแต่ปี พ.ศ. 2558 - 2562 และสร้างป้ายกำกับข้อมูล (data annotation) ในระดับกลุ่มของประโยคว่าสะท้อนอารมณ์และทัศนคติ จำนวน 12,258 กลุ่มประโยค ตามประเภทในตารางด้านล่าง ซึ่ง 1 ข้อความสามารถมีทัศนคติได้มากกว่า 1 ทัศนคติ และมีขั้วอารมณ์สอดคล้องต่อทัศนคตินั้น (aspect-based sentiment)
