@@ -245,6 +245,9 @@ result = analyzer.analyze_text(text)
 |   Positive - Recall    | 0.79 |
 |   Positive - F1        | 0.77 |
 
+# Financial Analysis
+สำหรับ code การวิเคราะห์ทางการเงิน สามารถดูตัวอย่างได้ที่ [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/drive/1N6u9MzDKZRsiMg_YtqE8nFscUfc2jmKl?usp=sharing)
+
 ## License
 [Creative Commons Attribution 4.0 International Public License (CC-by)](https://creativecommons.org/licenses/by/4.0/)
 
